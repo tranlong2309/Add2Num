@@ -7,7 +7,7 @@
 ## Repository Structure
 
 ```
-AddTwoNumber/
+Add2Num/
 ├── core/                         # Task 1 – C# .NET 9
 │   ├── Add2Num/                  #   Core library (MyBigNumber)
 │   ├── Add2Num.Tests/            #   xUnit unit tests
@@ -148,10 +148,10 @@ This approach handles numbers of **arbitrary size** — no integer overflow poss
 
 ```bash
 # Clone repository (replace <YOUR_ACCOUNT> with your GitHub username)
-git clone https://github.com/<YOUR_ACCOUNT>/AddTwoNumber \
-    ~/Projects/github.com/<YOUR_ACCOUNT>/AddTwoNumber
+git clone https://github.com/<YOUR_ACCOUNT>/Add2Num \
+    ~/Projects/github.com/<YOUR_ACCOUNT>/Add2Num
 
-cd ~/Projects/github.com/<YOUR_ACCOUNT>/AddTwoNumber
+cd ~/Projects/github.com/<YOUR_ACCOUNT>/Add2Num
 
 # --- Task 1 (core branch) ---
 git checkout core
