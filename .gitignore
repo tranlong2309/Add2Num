@@ -1,21 +1,18 @@
-# .NET build artefacts
-core/**/bin/
-core/**/obj/
-*.user
-*.suo
-.vs/
-*.DotSettings.user
-core/Add2Num.Tests/logs/
-
 # Java / Maven build artefacts
-web/target/
-web/logs/
+**/target/
 *.class
+
+# Logs
+web/logs/
+core/logs/
 
 # IDE
 .idea/
 *.iml
 .vscode/
+.settings/
+.classpath
+.project
 
 # OS
 .DS_Store

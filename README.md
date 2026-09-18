@@ -1,6 +1,6 @@
 # Add2Num — Add Two Large Numbers
 
-> Internship assignment: implement the elementary-school digit-by-digit addition algorithm for arbitrarily large integers represented as strings.
+> Internship assignment: implement the elementary-school digit-by-digit addition algorithm for arbitrarily large integers.
 
 ---
 
@@ -8,13 +8,21 @@
 
 ```
 Add2Num/
-├── core/                         # Task 1 – C# .NET 9
-│   ├── Add2Num/                  #   Core library (MyBigNumber)
-│   ├── Add2Num.Tests/            #   xUnit unit tests
-│   └── Add2Num.sln               #   .NET solution file
-├── web/                          # Task 2 – Spring Boot
-│   ├── src/
-│   └── pom.xml
+├── pom.xml                   # Parent POM (Maven multi-module)
+├── core/                     # Task 1 — Java library (add2num-core-0.0.1.jar)
+│   ├── pom.xml
+│   └── src/
+│       ├── main/java/com/add2num/core/
+│       │   └── MyBigNumber.java        # class MyBigNumber { sum(stn1, stn2) }
+│       └── test/java/com/add2num/core/
+│           └── MyBigNumberTest.java    # JUnit 5 unit tests
+├── web/                      # Task 2 — Spring Boot web app
+│   ├── pom.xml               #   depends on add2num-core as .jar library
+│   └── src/main/
+│       ├── java/com/add2num/web/
+│       │   ├── Add2NumApplication.java
+│       │   └── controller/AddNumberController.java
+│       └── resources/templates/index.html
 └── README.md
 ```
 
@@ -22,41 +30,58 @@ Add2Num/
 
 | Branch | Content |
 |--------|---------|
-| `core` | C# .NET 9 core library + unit tests (Task 1) |
-| `main` | Spring Boot web application (Task 2) |
+| `core` | Task 1 — Java core library (`core/` module) |
+| `main` | Task 2 — Full multi-module project (core + web) |
 
 Tags: `v0.0.1-core` (Task 1), `v0.0.1` (Task 2)
 
 ---
 
-## Task 1 — C# Core Library (`core` branch)
+## How Task 1 is reused in Task 2
+
+Task 2 (`add2num-web`) declares `add2num-core` as a Maven dependency in `web/pom.xml`:
+
+```xml
+<dependency>
+    <groupId>com.add2num</groupId>
+    <artifactId>add2num-core</artifactId>
+    <version>0.0.1</version>
+</dependency>
+```
+
+`AddNumberController` calls `myBigNumber.sum(a, b)` directly from the library — **no code duplication**.
+
+---
+
+## Task 1 — Core Library (`core` branch)
 
 ### Prerequisites
 
 | Tool | Version |
 |------|---------|
-| .NET SDK | 9.0+ |
+| Java | 17+     |
+| Maven | 3.8+  |
 
-### Build
+### Build & Install jar
 
 ```bash
 cd core
-dotnet build Add2Num.sln
+mvn clean install
+# Installs add2num-core-0.0.1.jar into local Maven repository
 ```
 
 ### Run Unit Tests
 
 ```bash
 cd core
-dotnet test --logger "console;verbosity=detailed"
+mvn test
 ```
 
 Expected output:
 
 ```
-Total tests: 8
-     Passed: 8
- Total time: ~0.5 Seconds
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS
 ```
 
 ### Test Cases
@@ -75,11 +100,11 @@ Total tests: 8
 ### Key Class
 
 ```
-Add2Num.MyBigNumber
-  └── string sum(string stn1, string stn2)
+com.add2num.core.MyBigNumber
+  └── AdditionResult sum(String stn1, String stn2)
 ```
 
-Each operation is logged step-by-step via **Serilog** (console + rolling file at `core/Add2Num.Tests/logs/`).
+Each step is logged via **SLF4J**.
 
 ---
 
@@ -89,65 +114,59 @@ Each operation is logged step-by-step via **Serilog** (console + rolling file at
 
 | Tool | Version |
 |------|---------|
-| Java | 17+ |
-| Maven | 3.8+ |
+| Java | 17+     |
+| Maven | 3.8+  |
 
-### Build
-
-```bash
-cd web
-mvn clean package -DskipTests
-```
-
-### Run
+### Build & Run (from project root)
 
 ```bash
-cd web
-mvn spring-boot:run
+# Step 1: install core library to local Maven repo
+mvn clean install -pl core
+
+# Step 2: run the web app (uses core.jar from local repo)
+mvn spring-boot:run -pl web
 ```
 
-Then open your browser at: **http://localhost:8080**
+Then open: **http://localhost:8080**
 
 ### Features
 
 - Enter two arbitrarily large numbers (digits only)
-- See the **step-by-step calculation** animated live in the browser
-- **Progress bar** tracks how many steps have completed
-- **History panel** shows the last 10 calculations
-- Server-side validation (non-digits rejected)
-- Calculation history logged via **SLF4J/Logback** to `web/logs/add2num-web.log`
+- **Step-by-step animated cards** showing each digit addition
+- **Progress bar** tracking completion
+- **History panel** for the last 10 calculations
+- Server-side validation; logs via SLF4J/Logback → `web/logs/add2num-web.log`
 
 ### Technology Stack
 
 | Layer | Technology |
 |-------|-----------|
+| Core library | Java 17 + SLF4J (`add2num-core-0.0.1.jar`) |
 | Framework | Spring Boot 3.3.4 |
 | Templating | Thymeleaf |
 | UI | Bootstrap 5 + Bootstrap Icons |
-| Fonts | Google Fonts (Inter, JetBrains Mono) |
-| Logging | SLF4J + Logback |
-| Build | Maven 3 |
+| Build | Maven 3 (multi-module) |
 
 ---
 
 ## Algorithm
 
-The addition follows the elementary-school method:
+Elementary-school right-to-left addition:
 
-1. Align both strings from the **right** (least significant digit).
-2. At each position: `sum = digit1 + digit2 + carry_in`
-3. `digit_written = sum % 10`, `carry_out = sum / 10`
-4. Repeat until all digits and the final carry are consumed.
-5. Reverse the collected digits to form the result.
+1. Traverse both strings from the **right** (least significant digit).
+2. At each position: `total = digit1 + digit2 + carry_in`
+3. `digit_written = total % 10`, `carry_out = total / 10`
+4. Repeat until all digits and the remaining carry are consumed.
+5. Reverse the collected digits → final result.
 
-This approach handles numbers of **arbitrary size** — no integer overflow possible.
+Handles numbers of **arbitrary size** — no integer overflow.
 
 ---
 
 ## Clone Instructions
 
 ```bash
-# Clone repository (replace <YOUR_ACCOUNT> with your GitHub username)
+# Clone (replace <YOUR_ACCOUNT> with your GitHub username)
 git clone https://github.com/<YOUR_ACCOUNT>/Add2Num \
     ~/Projects/github.com/<YOUR_ACCOUNT>/Add2Num
 
@@ -156,13 +175,13 @@ cd ~/Projects/github.com/<YOUR_ACCOUNT>/Add2Num
 # --- Task 1 (core branch) ---
 git checkout core
 cd core
-dotnet test
+mvn clean install   # builds + tests + installs .jar
 cd ..
 
 # --- Task 2 (main branch) ---
 git checkout main
-cd web
-mvn spring-boot:run
+mvn clean install -pl core          # install core jar first
+mvn spring-boot:run -pl web         # start web app
 ```
 
 ---
