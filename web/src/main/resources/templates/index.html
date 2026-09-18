@@ -117,12 +117,13 @@
         <div class="col-lg-7">
             <div class="card-glass mb-4">
 
-                <div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger rounded-3 mb-3" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    <span th:each="err : ${#fields.allErrors()}" th:text="${err}"></span>
-                </div>
-
                 <form id="calcForm" th:action="@{/calculate}" th:object="${form}" method="post">
+
+                    <div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger rounded-3 mb-3" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
+                    </div>
+
                     <div class="row align-items-center g-3">
 
                         <div class="col-12 col-md-5">
