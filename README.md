@@ -8,10 +8,11 @@
 
 ```
 AddTwoNumber/
-├── AddTwoNumber.Core/        # Task 1 – C# .NET 9 Class Library
-├── AddTwoNumber.Tests/       # Task 1 – xUnit unit tests
-├── AddTwoNumber.sln          # .NET solution file
-├── add2num-web/              # Task 2 – Spring Boot web application
+├── core/                         # Task 1 – C# .NET 9
+│   ├── AddTwoNumber.Core/        #   Core library (MyBigNumber)
+│   ├── AddTwoNumber.Tests/       #   xUnit unit tests
+│   └── AddTwoNumber.sln          #   .NET solution file
+├── web/                          # Task 2 – Spring Boot
 │   ├── src/
 │   └── pom.xml
 └── README.md
@@ -39,12 +40,14 @@ Tags: `v0.0.1-core` (Task 1), `v0.0.1` (Task 2)
 ### Build
 
 ```bash
+cd core
 dotnet build AddTwoNumber.sln
 ```
 
 ### Run Unit Tests
 
 ```bash
+cd core
 dotnet test --logger "console;verbosity=detailed"
 ```
 
@@ -76,7 +79,7 @@ AddTwoNumber.Core.MyBigNumber
   └── string Sum(string stn1, string stn2)
 ```
 
-Each operation is logged step-by-step via **Serilog** (console + rolling file at `AddTwoNumber.Tests/logs/`).
+Each operation is logged step-by-step via **Serilog** (console + rolling file at `core/AddTwoNumber.Tests/logs/`).
 
 ---
 
@@ -92,14 +95,14 @@ Each operation is logged step-by-step via **Serilog** (console + rolling file at
 ### Build
 
 ```bash
-cd add2num-web
+cd web
 mvn clean package -DskipTests
 ```
 
 ### Run
 
 ```bash
-cd add2num-web
+cd web
 mvn spring-boot:run
 ```
 
@@ -112,7 +115,7 @@ Then open your browser at: **http://localhost:8080**
 - **Progress bar** tracks how many steps have completed
 - **History panel** shows the last 10 calculations
 - Server-side validation (non-digits rejected)
-- Calculation history logged via **SLF4J/Logback** to `add2num-web/logs/add2num-web.log`
+- Calculation history logged via **SLF4J/Logback** to `web/logs/add2num-web.log`
 
 ### Technology Stack
 
@@ -152,11 +155,13 @@ cd ~/Projects/github.com/<YOUR_ACCOUNT>/AddTwoNumber
 
 # --- Task 1 (core branch) ---
 git checkout core
+cd core
 dotnet test
+cd ..
 
 # --- Task 2 (main branch) ---
 git checkout main
-cd add2num-web
+cd web
 mvn spring-boot:run
 ```
 

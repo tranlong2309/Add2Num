@@ -1,17 +1,16 @@
 # .NET build artefacts
-**/bin/
-**/obj/
+core/**/bin/
+core/**/obj/
 *.user
 *.suo
 .vs/
 *.DotSettings.user
-AddTwoNumber.Tests/logs/
+core/AddTwoNumber.Tests/logs/
 
 # Java / Maven build artefacts
-**/target/
-add2num-web/logs/
+web/target/
+web/logs/
 *.class
-*.jar
 
 # IDE
 .idea/
