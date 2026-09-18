@@ -23,7 +23,7 @@ import java.util.List;
  *   System.out.println(result.getResult()); // "2131"
  * }</pre>
  */
-public class MyBigNumber {
+public class    MyBigNumber {
 
     private static final Logger log = LoggerFactory.getLogger(MyBigNumber.class);
 

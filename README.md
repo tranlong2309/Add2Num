@@ -127,7 +127,7 @@ mvn clean install -pl core
 mvn spring-boot:run -pl web
 ```
 
-Then open: **http://localhost:8081**
+Then open: **http://localhost:8888**
 
 ### Features
 
