@@ -1,0 +1,23 @@
+# .NET build artefacts
+**/bin/
+**/obj/
+*.user
+*.suo
+.vs/
+*.DotSettings.user
+AddTwoNumber.Tests/logs/
+
+# Java / Maven build artefacts
+**/target/
+add2num-web/logs/
+*.class
+*.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
