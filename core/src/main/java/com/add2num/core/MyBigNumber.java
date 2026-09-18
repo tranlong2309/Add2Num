@@ -89,6 +89,16 @@ public class    MyBigNumber {
     // ── Public API ──────────────────────────────────────────────────────────
 
     /**
+     * Strict requirement implementation: Adds two large numbers and returns the result string.
+     * @param stn1 first operand
+     * @param stn2 second operand
+     * @return the sum as a string
+     */
+    public String sum(String stn1, String stn2) {
+        return sumWithSteps(stn1, stn2).getResult();
+    }
+
+    /**
      * Adds two non-negative integers represented as digit-only strings.
      *
      * <p>Assumption: both parameters contain only valid digit characters (0–9).
@@ -98,7 +108,7 @@ public class    MyBigNumber {
      * @param stn2 second operand as a string of digits
      * @return {@link AdditionResult} with the final answer and step-by-step breakdown
      */
-    public AdditionResult sum(String stn1, String stn2) {
+    public AdditionResult sumWithSteps(String stn1, String stn2) {
         log.info("sum() start: stn1='{}', stn2='{}'", stn1, stn2);
 
         int i     = stn1.length() - 1;

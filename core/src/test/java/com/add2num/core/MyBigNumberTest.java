@@ -23,27 +23,28 @@ class MyBigNumberTest {
     @Test
     @DisplayName("Basic: 1234 + 897 = 2131")
     void sum_basicCase() {
-        AdditionResult r = sut.sum("1234", "897");
-        assertEquals("2131", r.getResult());
+        assertEquals("2131", sut.sum("1234", "897"));
+        
+        AdditionResult r = sut.sumWithSteps("1234", "897");
         assertEquals(4, r.getSteps().size());   // 4 digit positions
     }
 
     @Test
     @DisplayName("Carry propagation: 999 + 1 = 1000")
     void sum_carryPropagation() {
-        assertEquals("1000", sut.sum("999", "1").getResult());
+        assertEquals("1000", sut.sum("999", "1"));
     }
 
     @Test
     @DisplayName("Different lengths: 1 + 999999 = 1000000")
     void sum_differentLengths() {
-        assertEquals("1000000", sut.sum("1", "999999").getResult());
+        assertEquals("1000000", sut.sum("1", "999999"));
     }
 
     @Test
     @DisplayName("Single digits with carry: 5 + 5 = 10")
     void sum_singleDigitWithCarry() {
-        assertEquals("10", sut.sum("5", "5").getResult());
+        assertEquals("10", sut.sum("5", "5"));
     }
 
     @Test
@@ -51,20 +52,20 @@ class MyBigNumberTest {
     void sum_veryLargeNumbers() {
         assertEquals(
             "100000000000000000000",
-            sut.sum("99999999999999999999", "1").getResult()
+            sut.sum("99999999999999999999", "1")
         );
     }
 
     @Test
     @DisplayName("One operand is zero")
     void sum_oneOperandIsZero() {
-        assertEquals("123", sut.sum("0", "123").getResult());
+        assertEquals("123", sut.sum("0", "123"));
     }
 
     @Test
     @DisplayName("Both operands are zero")
     void sum_bothZero() {
-        assertEquals("0", sut.sum("0", "0").getResult());
+        assertEquals("0", sut.sum("0", "0"));
     }
 
     @Test
@@ -72,7 +73,7 @@ class MyBigNumberTest {
     void sum_equalLargeNumbers() {
         assertEquals(
             "1000000000000000000000",
-            sut.sum("500000000000000000000", "500000000000000000000").getResult()
+            sut.sum("500000000000000000000", "500000000000000000000")
         );
     }
 }

@@ -73,8 +73,8 @@ public class AddNumberController {
 
         log.info("Calculation request: {} + {}", a, b);
 
-        // ✅ Call sum() from add2num-core library (Task 1 reused as .jar)
-        AdditionResult result = myBigNumber.sum(a, b);
+        // ✅ Call sumWithSteps() from add2num-core library to get animation steps
+        AdditionResult result = myBigNumber.sumWithSteps(a, b);
 
         log.info("Result: {} + {} = {} ({} steps)", a, b, result.getResult(), result.getSteps().size());
 
