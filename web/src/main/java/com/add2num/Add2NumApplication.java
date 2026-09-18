@@ -4,8 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AddTwoNumberApplication {
+public class Add2NumApplication {
     public static void main(String[] args) {
-        SpringApplication.run(AddTwoNumberApplication.class, args);
+        SpringApplication.run(Add2NumApplication.class, args);
     }
 }
