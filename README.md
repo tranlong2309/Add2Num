@@ -9,9 +9,9 @@
 ```
 AddTwoNumber/
 ├── core/                         # Task 1 – C# .NET 9
-│   ├── AddTwoNumber.Core/        #   Core library (MyBigNumber)
-│   ├── AddTwoNumber.Tests/       #   xUnit unit tests
-│   └── AddTwoNumber.sln          #   .NET solution file
+│   ├── Add2Num/                  #   Core library (MyBigNumber)
+│   ├── Add2Num.Tests/            #   xUnit unit tests
+│   └── Add2Num.sln               #   .NET solution file
 ├── web/                          # Task 2 – Spring Boot
 │   ├── src/
 │   └── pom.xml
@@ -41,7 +41,7 @@ Tags: `v0.0.1-core` (Task 1), `v0.0.1` (Task 2)
 
 ```bash
 cd core
-dotnet build AddTwoNumber.sln
+dotnet build Add2Num.sln
 ```
 
 ### Run Unit Tests
@@ -75,11 +75,11 @@ Total tests: 8
 ### Key Class
 
 ```
-AddTwoNumber.Core.MyBigNumber
-  └── string Sum(string stn1, string stn2)
+Add2Num.MyBigNumber
+  └── string sum(string stn1, string stn2)
 ```
 
-Each operation is logged step-by-step via **Serilog** (console + rolling file at `core/AddTwoNumber.Tests/logs/`).
+Each operation is logged step-by-step via **Serilog** (console + rolling file at `core/Add2Num.Tests/logs/`).
 
 ---
 

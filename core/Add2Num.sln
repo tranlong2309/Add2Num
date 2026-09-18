@@ -1,11 +1,11 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AddTwoNumber.Core", "AddTwoNumber.Core\AddTwoNumber.Core.csproj", "{4CE8BFA8-788F-45BC-9AB5-DDE4D5612DEF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Add2Num", "Add2Num\Add2Num.csproj", "{4CE8BFA8-788F-45BC-9AB5-DDE4D5612DEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AddTwoNumber.Tests", "AddTwoNumber.Tests\AddTwoNumber.Tests.csproj", "{9857FBED-AF73-4E64-AE37-6F320A4D0314}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Add2Num.Tests", "Add2Num.Tests\Add2Num.Tests.csproj", "{9857FBED-AF73-4E64-AE37-6F320A4D0314}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

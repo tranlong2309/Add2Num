@@ -5,7 +5,7 @@ core/**/obj/
 *.suo
 .vs/
 *.DotSettings.user
-core/AddTwoNumber.Tests/logs/
+core/Add2Num.Tests/logs/
 
 # Java / Maven build artefacts
 web/target/

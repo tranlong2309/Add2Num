@@ -1,6 +1,6 @@
 using Serilog;
 
-namespace AddTwoNumber.Core;
+namespace Add2Num;
 
 /// <summary>
 /// Provides big-number arithmetic operations.
@@ -17,9 +17,9 @@ public class MyBigNumber
     /// <param name="stn1">First number as a string of digits.</param>
     /// <param name="stn2">Second number as a string of digits.</param>
     /// <returns>The sum as a string of digits.</returns>
-    public string Sum(string stn1, string stn2)
+    public string sum(string stn1, string stn2)
     {
-        _logger.Information("Starting Sum operation: stn1={Stn1}, stn2={Stn2}", stn1, stn2);
+        _logger.Information("Starting sum: stn1={Stn1}, stn2={Stn2}", stn1, stn2);
 
         int i = stn1.Length - 1;
         int j = stn2.Length - 1;
@@ -53,7 +53,7 @@ public class MyBigNumber
         // Reverse the accumulated digits to get the final result
         string result = Reverse(resultDigits.ToString());
 
-        _logger.Information("Sum complete: {Stn1} + {Stn2} = {Result}", stn1, stn2, result);
+        _logger.Information("sum complete: {Stn1} + {Stn2} = {Result}", stn1, stn2, result);
 
         return result;
     }
