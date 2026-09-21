@@ -95,59 +95,94 @@ public class    MyBigNumber {
      * @return the sum as a string
      */
     public String sum(String stn1, String stn2) {
-        return sumWithSteps(stn1, stn2).getResult();
+        int len1 = stn1.length();
+        int len2 = stn2.length();
+        int maxLen = Math.max(len1, len2);
+        
+        // Cấp phát mảng char một lần duy nhất. Kích thước maxLen + 1 để chứa carry cuối (nếu có).
+        // Cách này giải quyết triệt để bài toán 1 tỷ số, tối ưu hoàn toàn RAM (O(N) memory), không cần dùng StringBuilder.reverse().
+        char[] resultChars = new char[maxLen + 1];
+        int writePos = maxLen;
+        
+        int i = len1 - 1;
+        int j = len2 - 1;
+        int carry = 0;
+        int step = 1;
+
+        // Khai báo biến bên ngoài vòng lặp theo chuẩn Clean Code
+        int digit1, digit2, total, digitWritten, carryOut;
+
+        // Dùng vòng for thay vì while, bổ sung ngoặc () rõ ràng cho các biểu thức điều kiện
+        for (; (i >= 0) || (j >= 0) || (carry > 0); i--, j--, step++) {
+            // Không đổi String sang Int bằng các hàm parse nặng nề, chỉ tính toán trực tiếp trên mã ASCII của char
+            digit1 = (i >= 0) ? (stn1.charAt(i) - '0') : 0;
+            digit2 = (j >= 0) ? (stn2.charAt(j) - '0') : 0;
+
+            total        = digit1 + digit2 + carry;
+            digitWritten = total % 10;
+            carryOut     = total / 10;
+
+            // Ghi trực tiếp ký tự char vào mảng từ phải qua trái
+            resultChars[writePos] = (char) (digitWritten + '0');
+            
+            log.info("Step {}: {} + {} + carry({}) = {} => write {}, carry_out={}",
+                    step, digit1, digit2, carry, total, digitWritten, carryOut);
+
+            carry = carryOut;
+            writePos--;
+        }
+
+        // Khởi tạo String một lần duy nhất từ mảng char, không cần reverse.
+        return new String(resultChars, writePos + 1, maxLen - writePos);
     }
 
     /**
-     * Adds two non-negative integers represented as digit-only strings.
-     *
-     * <p>Assumption: both parameters contain only valid digit characters (0–9).
-     * No sign, no whitespace, no decimal point.
-     *
-     * @param stn1 first operand as a string of digits
-     * @param stn2 second operand as a string of digits
-     * @return {@link AdditionResult} with the final answer and step-by-step breakdown
+     * Dành riêng cho giao diện Web (Task 2) để vẽ Animation.
+     * Thuật toán tối ưu tương tự hàm sum(), nhưng lưu thêm các bước vào List.
      */
     public AdditionResult sumWithSteps(String stn1, String stn2) {
-        log.info("sum() start: stn1='{}', stn2='{}'", stn1, stn2);
+        log.info("sumWithSteps() start: stn1='{}', stn2='{}'", stn1, stn2);
 
-        int i     = stn1.length() - 1;
-        int j     = stn2.length() - 1;
+        int len1 = stn1.length();
+        int len2 = stn2.length();
+        int maxLen = Math.max(len1, len2);
+        
+        char[] resultChars = new char[maxLen + 1];
+        int writePos = maxLen;
+        
+        int i = len1 - 1;
+        int j = len2 - 1;
         int carry = 0;
-        int step  = 1;
+        int step = 1;
 
-        StringBuilder      rawDigits = new StringBuilder();
-        List<AdditionStep> steps     = new ArrayList<>();
+        List<AdditionStep> steps = new ArrayList<>();
 
-        while (i >= 0 || j >= 0 || carry > 0) {
-            int digit1 = (i >= 0) ? (stn1.charAt(i) - '0') : 0;
-            int digit2 = (j >= 0) ? (stn2.charAt(j) - '0') : 0;
+        int digit1, digit2, total, digitWritten, carryOut;
+        String partial;
 
-            int total        = digit1 + digit2 + carry;
-            int digitWritten = total % 10;
-            int carryOut     = total / 10;
+        for (; (i >= 0) || (j >= 0) || (carry > 0); i--, j--, step++) {
+            digit1 = (i >= 0) ? (stn1.charAt(i) - '0') : 0;
+            digit2 = (j >= 0) ? (stn2.charAt(j) - '0') : 0;
 
-            rawDigits.append(digitWritten);
+            total        = digit1 + digit2 + carry;
+            digitWritten = total % 10;
+            carryOut     = total / 10;
 
-            // Partial result = digits collected so far, reversed to correct order
-            String partial = rawDigits.reverse().toString();
-            rawDigits.reverse(); // restore for next append
+            resultChars[writePos] = (char) (digitWritten + '0');
 
-            log.info("Step {}: {} + {} + carry({}) = {} => write {}, carry_out={}",
-                    step, digit1, digit2, carry, total, digitWritten, carryOut);
+            // Cắt ra chuỗi kết quả một phần để UI hiển thị (không tốn chi phí reverse)
+            partial = new String(resultChars, writePos, maxLen + 1 - writePos);
 
             steps.add(new AdditionStep(
                     step, digit1, digit2, carry,
                     total, digitWritten, carryOut, partial));
 
             carry = carryOut;
-            i--;
-            j--;
-            step++;
+            writePos--;
         }
 
-        String finalResult = rawDigits.reverse().toString();
-        log.info("sum() done: '{}' + '{}' = '{}'", stn1, stn2, finalResult);
+        String finalResult = new String(resultChars, writePos + 1, maxLen - writePos);
+        log.info("sumWithSteps() done: '{}' + '{}' = '{}'", stn1, stn2, finalResult);
 
         return new AdditionResult(stn1, stn2, finalResult, steps);
     }
