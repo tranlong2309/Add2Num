@@ -100,21 +100,20 @@ public class    MyBigNumber {
         int maxLen = Math.max(len1, len2);
         
         // Cấp phát mảng char một lần duy nhất. Kích thước maxLen + 1 để chứa carry cuối (nếu có).
-        // Cách này giải quyết triệt để bài toán 1 tỷ số, tối ưu hoàn toàn RAM (O(N) memory), không cần dùng StringBuilder.reverse().
         char[] resultChars = new char[maxLen + 1];
         int writePos = maxLen;
-        
-        int i = len1 - 1;
-        int j = len2 - 1;
         int carry = 0;
-        int step = 1;
 
-        // Khai báo biến bên ngoài vòng lặp theo chuẩn Clean Code
-        int digit1, digit2, total, digitWritten, carryOut;
+        // Khai báo biến bên ngoài vòng lặp
+        int i, j, digit1, digit2, total, digitWritten, carryOut;
 
-        // Dùng vòng for thay vì while, bổ sung ngoặc () rõ ràng cho các biểu thức điều kiện
-        for (; (i >= 0) || (j >= 0) || (carry > 0); i--, j--, step++) {
-            // Không đổi String sang Int bằng các hàm parse nặng nề, chỉ tính toán trực tiếp trên mã ASCII của char
+        // Dùng vòng for duyệt k từ 0 (từ chữ số cuối cùng) lên tới độ dài lớn nhất
+        // Cách này giúp vòng for cực kỳ dễ hiểu, đúng chuẩn cơ bản.
+        for (int k = 0; (k < maxLen) || (carry > 0); k++) {
+            // Tính toán index của 2 chuỗi tương ứng với bước k (lùi dần từ cuối lên đầu)
+            i = len1 - 1 - k;
+            j = len2 - 1 - k;
+
             digit1 = (i >= 0) ? (stn1.charAt(i) - '0') : 0;
             digit2 = (j >= 0) ? (stn2.charAt(j) - '0') : 0;
 
@@ -122,17 +121,15 @@ public class    MyBigNumber {
             digitWritten = total % 10;
             carryOut     = total / 10;
 
-            // Ghi trực tiếp ký tự char vào mảng từ phải qua trái
             resultChars[writePos] = (char) (digitWritten + '0');
             
             log.info("Step {}: {} + {} + carry({}) = {} => write {}, carry_out={}",
-                    step, digit1, digit2, carry, total, digitWritten, carryOut);
+                    k + 1, digit1, digit2, carry, total, digitWritten, carryOut);
 
             carry = carryOut;
             writePos--;
         }
 
-        // Khởi tạo String một lần duy nhất từ mảng char, không cần reverse.
         return new String(resultChars, writePos + 1, maxLen - writePos);
     }
 
@@ -149,18 +146,18 @@ public class    MyBigNumber {
         
         char[] resultChars = new char[maxLen + 1];
         int writePos = maxLen;
-        
-        int i = len1 - 1;
-        int j = len2 - 1;
         int carry = 0;
-        int step = 1;
 
         List<AdditionStep> steps = new ArrayList<>();
 
-        int digit1, digit2, total, digitWritten, carryOut;
+        int i, j, digit1, digit2, total, digitWritten, carryOut;
         String partial;
 
-        for (; (i >= 0) || (j >= 0) || (carry > 0); i--, j--, step++) {
+        // Vòng lặp k đếm số lần thực hiện phép cộng
+        for (int k = 0; (k < maxLen) || (carry > 0); k++) {
+            i = len1 - 1 - k;
+            j = len2 - 1 - k;
+
             digit1 = (i >= 0) ? (stn1.charAt(i) - '0') : 0;
             digit2 = (j >= 0) ? (stn2.charAt(j) - '0') : 0;
 
@@ -170,11 +167,10 @@ public class    MyBigNumber {
 
             resultChars[writePos] = (char) (digitWritten + '0');
 
-            // Cắt ra chuỗi kết quả một phần để UI hiển thị (không tốn chi phí reverse)
             partial = new String(resultChars, writePos, maxLen + 1 - writePos);
 
             steps.add(new AdditionStep(
-                    step, digit1, digit2, carry,
+                    k + 1, digit1, digit2, carry,
                     total, digitWritten, carryOut, partial));
 
             carry = carryOut;
