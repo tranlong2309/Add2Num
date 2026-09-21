@@ -99,34 +99,71 @@ public class    MyBigNumber {
         int len2 = stn2.length();
         int maxLen = Math.max(len1, len2);
         
-        // Cấp phát mảng char một lần duy nhất. Kích thước maxLen + 1 để chứa carry cuối (nếu có).
         char[] resultChars = new char[maxLen + 1];
         int writePos = maxLen;
         int carry = 0;
+        int step = 1;
 
-        // Khai báo biến bên ngoài vòng lặp
-        int i, j, digit1, digit2, total, digitWritten, carryOut;
+        int i = len1 - 1;
+        int j = len2 - 1;
+        
+        // Khai báo biến ra ngoài vòng lặp
+        int total, digit1, digit2, digitWritten, carryOut;
 
-        // Dùng vòng for duyệt k từ 0 (từ chữ số cuối cùng) lên tới độ dài lớn nhất
-        // Cách này giúp vòng for cực kỳ dễ hiểu, đúng chuẩn cơ bản.
-        for (int k = 0; (k < maxLen) || (carry > 0); k++) {
-            // Tính toán index của 2 chuỗi tương ứng với bước k (lùi dần từ cuối lên đầu)
-            i = len1 - 1 - k;
-            j = len2 - 1 - k;
-
-            digit1 = (i >= 0) ? (stn1.charAt(i) - '0') : 0;
-            digit2 = (j >= 0) ? (stn2.charAt(j) - '0') : 0;
-
-            total        = digit1 + digit2 + carry;
+        // Pha 1: Cả 2 chuỗi đều còn chữ số
+        while (i >= 0 && j >= 0) {
+            digit1 = stn1.charAt(i--) - '0';
+            digit2 = stn2.charAt(j--) - '0';
+            total = digit1 + digit2 + carry;
             digitWritten = total % 10;
-            carryOut     = total / 10;
-
+            carryOut = total / 10;
+            
             resultChars[writePos] = (char) (digitWritten + '0');
             
             log.info("Step {}: {} + {} + carry({}) = {} => write {}, carry_out={}",
-                    k + 1, digit1, digit2, carry, total, digitWritten, carryOut);
+                    step++, digit1, digit2, carry, total, digitWritten, carryOut);
 
             carry = carryOut;
+            writePos--;
+        }
+
+        // Pha 2: Chỉ còn chuỗi 1
+        while (i >= 0) {
+            digit1 = stn1.charAt(i--) - '0';
+            total = digit1 + carry;
+            digitWritten = total % 10;
+            carryOut = total / 10;
+            
+            resultChars[writePos] = (char) (digitWritten + '0');
+            
+            log.info("Step {}: {} + 0 + carry({}) = {} => write {}, carry_out={}",
+                    step++, digit1, carry, total, digitWritten, carryOut);
+
+            carry = carryOut;
+            writePos--;
+        }
+
+        // Pha 3: Chỉ còn chuỗi 2
+        while (j >= 0) {
+            digit2 = stn2.charAt(j--) - '0';
+            total = digit2 + carry;
+            digitWritten = total % 10;
+            carryOut = total / 10;
+            
+            resultChars[writePos] = (char) (digitWritten + '0');
+            
+            log.info("Step {}: 0 + {} + carry({}) = {} => write {}, carry_out={}",
+                    step++, digit2, carry, total, digitWritten, carryOut);
+
+            carry = carryOut;
+            writePos--;
+        }
+
+        // Pha 4: Xử lý phần nhớ cuối cùng
+        if (carry > 0) {
+            resultChars[writePos] = (char) (carry + '0');
+            log.info("Step {}: 0 + 0 + carry({}) = {} => write {}, carry_out=0",
+                    step, carry, carry, carry);
             writePos--;
         }
 
@@ -135,7 +172,7 @@ public class    MyBigNumber {
 
     /**
      * Dành riêng cho giao diện Web (Task 2) để vẽ Animation.
-     * Thuật toán tối ưu tương tự hàm sum(), nhưng lưu thêm các bước vào List.
+     * Áp dụng Loop Splitting tương tự hàm sum(), lưu thêm các bước vào List.
      */
     public AdditionResult sumWithSteps(String stn1, String stn2) {
         log.info("sumWithSteps() start: stn1='{}', stn2='{}'", stn1, stn2);
@@ -147,33 +184,81 @@ public class    MyBigNumber {
         char[] resultChars = new char[maxLen + 1];
         int writePos = maxLen;
         int carry = 0;
+        int step = 1;
 
         List<AdditionStep> steps = new ArrayList<>();
 
-        int i, j, digit1, digit2, total, digitWritten, carryOut;
+        int i = len1 - 1;
+        int j = len2 - 1;
+        
+        // Khai báo biến ra ngoài vòng lặp
+        int total, digit1, digit2, digitWritten, carryOut;
         String partial;
 
-        // Vòng lặp k đếm số lần thực hiện phép cộng
-        for (int k = 0; (k < maxLen) || (carry > 0); k++) {
-            i = len1 - 1 - k;
-            j = len2 - 1 - k;
-
-            digit1 = (i >= 0) ? (stn1.charAt(i) - '0') : 0;
-            digit2 = (j >= 0) ? (stn2.charAt(j) - '0') : 0;
-
-            total        = digit1 + digit2 + carry;
+        // Pha 1: Cả 2 chuỗi
+        while (i >= 0 && j >= 0) {
+            digit1 = stn1.charAt(i--) - '0';
+            digit2 = stn2.charAt(j--) - '0';
+            total = digit1 + digit2 + carry;
             digitWritten = total % 10;
-            carryOut     = total / 10;
+            carryOut = total / 10;
 
             resultChars[writePos] = (char) (digitWritten + '0');
-
             partial = new String(resultChars, writePos, maxLen + 1 - writePos);
 
             steps.add(new AdditionStep(
-                    k + 1, digit1, digit2, carry,
+                    step++, digit1, digit2, carry,
                     total, digitWritten, carryOut, partial));
 
             carry = carryOut;
+            writePos--;
+        }
+
+        // Pha 2: Chỉ còn chuỗi 1
+        while (i >= 0) {
+            digit1 = stn1.charAt(i--) - '0';
+            total = digit1 + carry;
+            digitWritten = total % 10;
+            carryOut = total / 10;
+
+            resultChars[writePos] = (char) (digitWritten + '0');
+            partial = new String(resultChars, writePos, maxLen + 1 - writePos);
+
+            steps.add(new AdditionStep(
+                    step++, digit1, 0, carry,
+                    total, digitWritten, carryOut, partial));
+
+            carry = carryOut;
+            writePos--;
+        }
+
+        // Pha 3: Chỉ còn chuỗi 2
+        while (j >= 0) {
+            digit2 = stn2.charAt(j--) - '0';
+            total = digit2 + carry;
+            digitWritten = total % 10;
+            carryOut = total / 10;
+
+            resultChars[writePos] = (char) (digitWritten + '0');
+            partial = new String(resultChars, writePos, maxLen + 1 - writePos);
+
+            steps.add(new AdditionStep(
+                    step++, 0, digit2, carry,
+                    total, digitWritten, carryOut, partial));
+
+            carry = carryOut;
+            writePos--;
+        }
+
+        // Pha 4: Nhớ cuối cùng
+        if (carry > 0) {
+            resultChars[writePos] = (char) (carry + '0');
+            partial = new String(resultChars, writePos, maxLen + 1 - writePos);
+
+            steps.add(new AdditionStep(
+                    step++, 0, 0, carry,
+                    carry, carry, 0, partial));
+
             writePos--;
         }
 
