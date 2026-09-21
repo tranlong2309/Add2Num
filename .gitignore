@@ -18,3 +18,5 @@ core/logs/
 # OS
 .DS_Store
 Thumbs.db
+output.log
+*.log
