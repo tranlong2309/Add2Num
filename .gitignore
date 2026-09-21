@@ -3,6 +3,7 @@
 *.class
 
 # Logs
+logs/
 web/logs/
 core/logs/
 
