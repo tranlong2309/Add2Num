@@ -101,10 +101,37 @@ BUILD SUCCESS
 
 ```
 com.add2num.core.MyBigNumber
-  └── AdditionResult sum(String stn1, String stn2)
+  ├── String sum(String stn1, String stn2)
+  └── AdditionResult sumWithSteps(String stn1, String stn2)
 ```
 
 Each step is logged via **SLF4J**.
+
+### Performance Benchmark
+
+`Benchmark` compares four implementations of large-number addition:
+
+| Version | Implementation |
+|---------|----------------|
+| V1 | `StringBuilder` with reversed output |
+| V2 | `char[]` output with modulo arithmetic |
+| V4 | Loop splitting for equal and remaining digits |
+| V5 | Loop splitting with loop unrolling by four |
+
+The benchmark uses two deterministic random numbers with 10,000,000 digits. Each
+implementation is warmed up 50 times and then measured over 100 runs.
+
+Run it from the `core` directory after compiling test classes:
+
+```bash
+mvn test-compile
+java -cp target/test-classes com.add2num.core.Benchmark
+```
+
+The output reports the total time for 100 runs in milliseconds. Results depend
+on the JDK, CPU, memory, and system load, so use them for relative comparison
+on the same machine. This is a lightweight benchmark; use JMH for reproducible
+performance measurements.
 
 ---
 

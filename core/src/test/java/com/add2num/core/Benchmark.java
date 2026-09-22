@@ -24,7 +24,7 @@ public class Benchmark {
             sumV5_Extreme_Unrolling(s1, s2);
         }
 
-        System.out.println("Starting Benchmark (1,000,000 digits)...");
+        System.out.println("Starting Benchmark (10,000,000 digits)...");
 
         long t1 = System.nanoTime();
         for (int i = 0; i < 100; i++) sumV1_StringBuilder(s1, s2);
