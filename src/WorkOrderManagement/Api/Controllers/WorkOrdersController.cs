@@ -12,12 +12,14 @@ namespace WorkOrderManagement.Api.Controllers;
 [Route("api/work-orders")]
 public class WorkOrdersController : ControllerBase
 {
-    private readonly CreateWorkOrderCommandHandler _handler;
+    private readonly CreateWorkOrderCommandHandler _createHandler;
+    private readonly UpdateWorkOrderStatusCommandHandler _updateHandler;
 
     // Dependency Injection used here
-    public WorkOrdersController(CreateWorkOrderCommandHandler handler)
+    public WorkOrdersController(CreateWorkOrderCommandHandler createHandler, UpdateWorkOrderStatusCommandHandler updateHandler)
     {
-        _handler = handler;
+        _createHandler = createHandler;
+        _updateHandler = updateHandler;
     }
 
     [HttpPost]
@@ -32,10 +34,30 @@ public class WorkOrdersController : ControllerBase
             CreatedBy = User.Identity?.Name ?? "System"
         };
 
-        var workOrderId = await _handler.Handle(command, cancellationToken);
+        var workOrderId = await _createHandler.Handle(command, cancellationToken);
         
         return Created($"/api/work-orders/{workOrderId}", new { Id = workOrderId });
     }
+
+    [HttpPatch("{id}/status")]
+    public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateWorkOrderStatusRequest request, CancellationToken cancellationToken)
+    {
+        var command = new UpdateWorkOrderStatusCommand
+        {
+            WorkOrderId = id,
+            NewStatus = request.NewStatus
+        };
+
+        var result = await _updateHandler.Handle(command, cancellationToken);
+        
+        if (!result) return NotFound();
+        return NoContent();
+    }
+}
+
+public class UpdateWorkOrderStatusRequest
+{
+    public Domain.Enums.WorkOrderStatus NewStatus { get; set; }
 }
 
 public class CreateWorkOrderRequest

@@ -46,3 +46,5 @@ Incorrect error response:
 ```text
 java.sql.SQLException: INSERT statement failed at line 42
 ```
+
+11. Always check for null entities when querying by ID and return standard HTTP 404 Not Found instead of causing internal server errors.
