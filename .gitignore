@@ -20,3 +20,6 @@ core/logs/
 Thumbs.db
 output.log
 *.log
+
+[Oo]bj/
+[Bb]in/
