@@ -47,4 +47,19 @@ public class WorkOrderTests
             WorkOrder.Create(equipmentId, priority, description, createdBy));
         Assert.Contains("Description cannot be empty", exception.Message);
     }
+
+    [Fact]
+    public void CreateWorkOrder_WithExtremelyLongDescription_ThrowsArgumentException()
+    {
+        // Arrange
+        var equipmentId = Guid.NewGuid();
+        var priority = Priority.High;
+        var description = new string('A', 2001); // 2001 chars, exceeds limit
+        var createdBy = "User1";
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentException>(() => 
+            WorkOrder.Create(equipmentId, priority, description, createdBy));
+        Assert.Contains("Description cannot exceed 2000 characters", exception.Message);
+    }
 }

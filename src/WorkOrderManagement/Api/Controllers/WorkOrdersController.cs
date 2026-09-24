@@ -2,10 +2,12 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using WorkOrderManagement.Application.Commands;
 
 namespace WorkOrderManagement.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/work-orders")]
 public class WorkOrdersController : ControllerBase

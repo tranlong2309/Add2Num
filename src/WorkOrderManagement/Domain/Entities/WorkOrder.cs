@@ -25,6 +25,9 @@ public class WorkOrder
         if (string.IsNullOrWhiteSpace(description))
             throw new ArgumentException("Description cannot be empty.", nameof(description));
 
+        if (description.Length > 2000)
+            throw new ArgumentException("Description cannot exceed 2000 characters.", nameof(description));
+
         var workOrder = new WorkOrder
         {
             Id = Guid.NewGuid(),
