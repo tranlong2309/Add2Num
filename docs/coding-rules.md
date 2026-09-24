@@ -14,7 +14,8 @@ This file defines the baseline coding rules for the Add2Num project.
 8. Keep public methods and classes documented when their behavior is not self-evident.
 9. Avoid declaring reusable temporary variables inside loops when the project performance rules require stable loop scope.
 10. Write unit tests for normal cases, boundary cases, and invalid input.
-
+11. **[Compounding Rule]** AI MUST NOT generate tautological or self-affirming tests (e.g., `Assert.True(true)`). All tests must contain actual logic and assertions against the system under test.
+12. **[Compounding Rule]** Always configure `.gitignore` for the specific framework (e.g. ignoring `obj/` and `bin/` for C#) BEFORE running any `git add` commands to prevent committing build caches.
 ## Correct and Incorrect Examples
 
 ### Dependency Injection
