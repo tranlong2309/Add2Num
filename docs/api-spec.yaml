@@ -1,0 +1,212 @@
+openapi: 3.0.3
+info:
+  title: Work Order Management API
+  version: 1.0.0
+  description: API specifications for Work Order Management, following C# .NET 9 Clean Architecture and CQRS principles.
+servers:
+  - url: /
+paths:
+  /api/work-orders:
+    post:
+      summary: Create a new Work Order
+      description: Dispatches a CreateWorkOrderCommand.
+      tags:
+        - Work Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkOrderRequest'
+      responses:
+        '201':
+          description: Work Order created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateWorkOrderResponse'
+        '400':
+          description: Bad Request (Validation errors)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: List Work Orders with cursor-based pagination
+      description: Returns a paginated list of work orders, optionally filtered by status. Uses keyset/cursor pagination for high performance.
+      tags:
+        - Work Orders
+      parameters:
+        - name: status
+          in: query
+          description: Filter by work order status
+          required: false
+          schema:
+            $ref: '#/components/schemas/WorkOrderStatus'
+        - name: cursor
+          in: query
+          description: The cursor for the next page (e.g., CreatedDate or Id). Leave empty for the first page.
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Maximum number of items to return (default 20, max 100).
+          required: false
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+      responses:
+        '200':
+          description: A paginated list of work orders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CursorPagedWorkOrderResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/work-orders/{id}:
+    get:
+      summary: Get Work Order details by ID
+      description: Retrieves the full details of a specific Work Order.
+      tags:
+        - Work Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique identifier of the Work Order (UUID).
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Work Order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrderDto'
+        '404':
+          description: Work Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+
+components:
+  schemas:
+    WorkOrderStatus:
+      type: string
+      enum:
+        - Open
+        - InProgress
+        - Completed
+        - Cancelled
+
+    Priority:
+      type: string
+      enum:
+        - Low
+        - Medium
+        - High
+        - Critical
+
+    CreateWorkOrderRequest:
+      type: object
+      required:
+        - equipmentId
+        - priority
+        - description
+      properties:
+        equipmentId:
+          type: string
+          format: uuid
+        priority:
+          $ref: '#/components/schemas/Priority'
+        description:
+          type: string
+          maxLength: 2000
+
+    CreateWorkOrderResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+
+    WorkOrderDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        equipmentId:
+          type: string
+          format: uuid
+        priority:
+          $ref: '#/components/schemas/Priority'
+        description:
+          type: string
+        technicianId:
+          type: string
+          format: uuid
+          nullable: true
+        status:
+          $ref: '#/components/schemas/WorkOrderStatus'
+        createdDate:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+        modifiedDate:
+          type: string
+          format: date-time
+          nullable: true
+        modifiedBy:
+          type: string
+          nullable: true
+        rowVersion:
+          type: string
+          format: byte
+          description: Concurrency token for Optimistic Locking
+
+    CursorPagedWorkOrderResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkOrderDto'
+        nextCursor:
+          type: string
+          nullable: true
+          description: Cursor to be used to fetch the next page. Null if there are no more pages.
+        hasNextPage:
+          type: boolean
+
+    ErrorResponse:
+      type: object
+      properties:
+        trackingId:
+          type: string
+          format: uuid
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
